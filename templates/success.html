@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>File Exchange</title>
+    <style>
+        h1 {
+            color: white;
+            text-align: center;
+            margin: 10% 10%;
+        }
+        body {
+            background: black;
+            font-family: Arial, sans-serif;
+        }
+        .box {
+            background-color: white;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 190%;
+            width: 80%;
+            height: auto;
+            padding: 20px;
+            margin: 0 auto;
+            margin-top: 80px;
+            margin-bottom: 8%;
+        }
+        .file-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .file-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .file-actions a {
+            margin-left: 10px;
+            text-decoration: none;
+            color: #333;
+        }
+        .file-actions a:hover {
+            color: #0066cc;
+        }
+        .flash-message {
+            color: green;
+            margin-bottom: 15px;
+        }
+        .upload-form {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Файлообменник</h1>
+    <div class="box">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-message">
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form class="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file">
+            <button type="submit">Загрузить файл</button>
+        </form>
+
+        <h3>Доступные файлы:</h3>
+        <ul class="file-list">
+            {% for file in files %}
+                <li class="file-item">
+                    <span>{{ file }}</span>
+                    <div class="file-actions">
+                        <a href="/download/{{ file }}">Скачать</a>
+                        <a href="/delete/{{ file }}" onclick="return confirm('Вы уверены?')">Удалить</a>
+                    </div>
+                </li>
+            {% else %}
+                <li>Нет доступных файлов</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

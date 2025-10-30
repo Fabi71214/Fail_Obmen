@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link type="text/css" href="{{ url_for('static', filename='css/styles.css')}}" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <title>Вход</title>
+</head>
+<body>
+  <h1>Вход</h1>
+  <div class="box">
+    <form method="POST" action="/login">  <!-- Форма будет отправлять данные на /login -->
+      <p>Введите пароль</p>
+      <input type="password" name="password" id="passwordInput">  <!-- Обратите внимание на name="password" -->
+      <button type="submit">Войти</button>  <!-- type="submit" для отправки формы -->
+    </form>
+    {% if error %}  <!-- Это сообщение будет показываться, если пароль неверный -->
+      <p style="color: red;">Неверный пароль!</p>
+    {% endif %}
+  </div>
+</body>
+</html>

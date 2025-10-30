@@ -1,0 +1,9 @@
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+instance/
+.DS_Store
+uploads/  # Не загружаем папку с файлами в Git
