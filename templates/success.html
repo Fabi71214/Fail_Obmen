@@ -1,62 +1,255 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <title>File Exchange</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Файлообменник - Файлы</title>
     <style>
-        h1 {
-            color: white;
-            text-align: center;
-            margin: 10% 10%;
-        }
-        body {
-            background: black;
-            font-family: Arial, sans-serif;
-        }
-        .box {
-            background-color: white;
-            border-radius: 5px;
-            text-align: center;
-            font-size: 190%;
-            width: 80%;
-            height: auto;
-            padding: 20px;
-            margin: 0 auto;
-            margin-top: 80px;
-            margin-bottom: 8%;
-        }
-        .file-list {
-            list-style-type: none;
+        * {
+            margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
-        .file-item {
-            margin: 10px 0;
-            padding: 10px;
-            background: #f0f0f0;
-            border-radius: 3px;
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+            min-height: 100vh;
+            color: #ffffff;
+        }
+
+        .header {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #333;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .file-actions a {
-            margin-left: 10px;
-            text-decoration: none;
-            color: #333;
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            color: #ffffff;
         }
-        .file-actions a:hover {
-            color: #0066cc;
+
+        .user-info {
+            color: #888;
+            font-size: 0.9rem;
         }
-        .flash-message {
-            color: green;
-            margin-bottom: 15px;
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
-        .upload-form {
+
+        .upload-section {
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid #333;
+        }
+
+        .section-title {
+            color: #ffffff;
             margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        .upload-form {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .file-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px;
+            background: #2d2d2d;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            color: #ffffff;
+        }
+
+        .upload-btn {
+            padding: 12px 25px;
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-btn:hover {
+            background: #e6e6e6;
+            transform: translateY(-1px);
+        }
+
+        .files-section {
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid #333;
+        }
+
+        .file-list {
+            list-style: none;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #2d2d2d;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .file-item:hover {
+            background: #333;
+            border-color: #555;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .file-icon {
+            width: 24px;
+            height: 24px;
+            background: #404040;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .file-name {
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-download {
+            background: #404040;
+            color: #ffffff;
+        }
+
+        .btn-download:hover {
+            background: #555;
+        }
+
+        .btn-delete {
+            background: #5c3a3a;
+            color: #ff6b6b;
+        }
+
+        .btn-delete:hover {
+            background: #6c4a4a;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #666;
+            padding: 60px 20px;
+            font-size: 1.1rem;
+        }
+
+        .flash-message {
+            background: #2d3a2d;
+            border: 1px solid #404040;
+            color: #6bff6b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .upload-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .file-item {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .file-actions {
+                align-self: stretch;
+                justify-content: space-between;
+            }
+
+            .btn {
+                flex: 1;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Файлообменник</h1>
-    <div class="box">
+    <div class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <h1>FILEBOX</h1>
+            </div>
+            <div class="user-info">
+                Авторизованный доступ
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 <div class="flash-message">
@@ -67,25 +260,55 @@
             {% endif %}
         {% endwith %}
 
-        <form class="upload-form" action="/upload" method="post" enctype="multipart/form-data">
-            <input type="file" name="file">
-            <button type="submit">Загрузить файл</button>
-        </form>
+        <div class="upload-section">
+            <h2 class="section-title">Загрузка файла</h2>
+            <form class="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" class="file-input" required>
+                <button type="submit" class="upload-btn">ЗАГРУЗИТЬ</button>
+            </form>
+        </div>
 
-        <h3>Доступные файлы:</h3>
-        <ul class="file-list">
-            {% for file in files %}
-                <li class="file-item">
-                    <span>{{ file }}</span>
-                    <div class="file-actions">
-                        <a href="/download/{{ file }}">Скачать</a>
-                        <a href="/delete/{{ file }}" onclick="return confirm('Вы уверены?')">Удалить</a>
-                    </div>
-                </li>
+        <div class="files-section">
+            <h2 class="section-title">Доступные файлы</h2>
+
+            {% if files %}
+                <ul class="file-list">
+                    {% for file in files %}
+                        <li class="file-item">
+                            <div class="file-info">
+                                <div class="file-icon">📄</div>
+                                <span class="file-name">{{ file }}</span>
+                            </div>
+                            <div class="file-actions">
+                                <a href="/download/{{ file }}" class="btn btn-download">СКАЧАТЬ</a>
+                                <a href="/delete/{{ file }}" class="btn btn-delete" onclick="return confirm('Вы уверены, что хотите удалить этот файл?')">УДАЛИТЬ</a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
             {% else %}
-                <li>Нет доступных файлов</li>
-            {% endfor %}
-        </ul>
+                <div class="empty-state">
+                    📁 Нет доступных файлов
+                </div>
+            {% endif %}
+        </div>
     </div>
+
+    <script>
+        // Добавляем интерактивность для файлов
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileItems = document.querySelectorAll('.file-item');
+
+            fileItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
 </body>
 </html>

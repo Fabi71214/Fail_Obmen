@@ -1,21 +1,166 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <link type="text/css" href="{{ url_for('static', filename='css/styles.css')}}" rel="stylesheet" />
     <meta charset="UTF-8">
-    <title>Вход</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Файлообменник - Вход</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .logo .subtitle {
+            color: #888;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .auth-card {
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 40px 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid #333;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            background: #2d2d2d;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #666;
+            background: #333;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: #e6e6e6;
+            transform: translateY(-1px);
+        }
+
+        .error-message {
+            background: #2d1a1a;
+            border: 1px solid #5c3a3a;
+            color: #ff6b6b;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .security-notice {
+            text-align: center;
+            margin-top: 25px;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+
+            .auth-card {
+                padding: 30px 20px;
+            }
+
+            .logo h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>Вход</h1>
-  <div class="box">
-    <form method="POST" action="/login">  <!-- Форма будет отправлять данные на /login -->
-      <p>Введите пароль</p>
-      <input type="password" name="password" id="passwordInput">  <!-- Обратите внимание на name="password" -->
-      <button type="submit">Войти</button>  <!-- type="submit" для отправки формы -->
-    </form>
-    {% if error %}  <!-- Это сообщение будет показываться, если пароль неверный -->
-      <p style="color: red;">Неверный пароль!</p>
-    {% endif %}
-  </div>
+    <div class="container">
+        <div class="logo">
+            <h1>FILEBOX</h1>
+            <div class="subtitle">SECURE FILE EXCHANGE</div>
+        </div>
+
+        <div class="auth-card">
+            <form method="POST" action="/login">
+                <div class="form-group">
+                    <label for="passwordInput">ПАРОЛЬ ДОСТУПА</label>
+                    <input type="password" name="password" id="passwordInput" class="password-input" placeholder="Введите пароль" required>
+                </div>
+                <button type="submit" class="submit-btn">ПОДКЛЮЧИТЬСЯ</button>
+            </form>
+
+            {% if error %}
+                <div class="error-message">
+                    ⚠ Неверный пароль доступа
+                </div>
+            {% endif %}
+
+            <div class="security-notice">
+                Защищенное соединение • Только авторизованный доступ
+            </div>
+        </div>
+    </div>
 </body>
 </html>

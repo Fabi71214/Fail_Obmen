@@ -7,7 +7,7 @@ app.secret_key = os.environ.get('SECRET_KEY', 'fallback-secret-key-for-developme
 
 # Конфигурация загрузки файлов
 UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'xls', 'xlsx'}
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'xls', 'xlsx',"mp4"}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Создаем папку для загрузок, если ее нет
@@ -51,14 +51,13 @@ def upload_file():
     if file.filename == '':
         flash('No file selected')
         return redirect(url_for("success"))
-
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        flash('File successfully uploaded')
+        flash('Файл успешно загружен')
         return redirect(url_for("success"))
     else:
-        flash('Invalid file type')
+        flash('Файл не подходит')
         return redirect(url_for("success"))
 
 
@@ -73,7 +72,7 @@ def download_file(filename):
 def delete_file(filename):
     try:
         os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        flash('File deleted successfully')
+        flash('Файл успешно удалён')
     except FileNotFoundError:
         flash('File not found')
     return redirect(url_for("success"))
