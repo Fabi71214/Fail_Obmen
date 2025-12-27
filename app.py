@@ -24,7 +24,7 @@ def index():
 @app.route("/login", methods=["POST"])
 def login():
     password = request.form.get("password")
-    correct_password = "12345"
+    correct_password = "8962"
 
     if password == correct_password:
         return redirect(url_for("success"))
@@ -83,6 +83,3 @@ def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
-if __name__ == "__main__":
-    app.run(debug=True)
