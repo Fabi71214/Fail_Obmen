@@ -1,26 +1,31 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 import os
+import shutil
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'fallback-secret-key-for-development') # Нужно для работы flash-сообщений
 
-# Конфигурация загрузки файлов
 UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'xls', 'xlsx',"mp4"}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# Создаем папку для загрузок, если ее нет
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
-# Главная страница с формой ввода
 @app.route("/")
 def index():
     return render_template("index.html", error=False)
 
+@app.route("/folder/<folder_name>")
+def open_folder(folder_name):
+    folder_path = os.path.join("uploads", folder_name)
 
-# Обработчик формы входа
+    if not os.path.exists(folder_path):
+        flash("Папка не найдена")
+        return redirect(url_for("success"))
+
+    files = os.listdir(folder_path)
+    return render_template("folder.html", folder=folder_name, files=files)
+
 @app.route("/login", methods=["POST"])
 def login():
     password = request.form.get("password")
@@ -31,55 +36,71 @@ def login():
     else:
         return render_template("index.html", error=True)
 
-
-# Страница успешного входа
 @app.route("/success")
 def success():
-    # Получаем список файлов в папке загрузок
     files = os.listdir(app.config['UPLOAD_FOLDER'])
     return render_template("success.html", files=files)
 
-
-# Загрузка файлов
 @app.route("/upload", methods=["POST"])
-def upload_file():
-    if 'file' not in request.files:
-        flash('No file selected')
-        return redirect(url_for("success"))
-
-    file = request.files['file']
-    if file.filename == '':
-        flash('No file selected')
-        return redirect(url_for("success"))
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        flash('Файл успешно загружен')
-        return redirect(url_for("success"))
+def upload_papk():
+    name=request.form.get("name_file", "").strip()
+    if name=="":
+        flash("Введи название папки")
+    folder_path = os.path.join("uploads", name)
+    if os.path.exists(folder_path):
+        flash("Такая папка уже есть")
     else:
-        flash('Файл не подходит')
-        return redirect(url_for("success"))
-
-
-# Скачивание файлов
-@app.route("/download/<filename>")
-def download_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
-
-
-# Удаление файлов
-@app.route("/delete/<filename>")
-def delete_file(filename):
-    try:
-        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        flash('Файл успешно удалён')
-    except FileNotFoundError:
-        flash('File not found')
+        os.makedirs(folder_path)
+        flash("Папка успешно создана")
     return redirect(url_for("success"))
 
+@app.route("/upload_file/<folder_name>", methods=["POST"])
+def upload_file(folder_name):
+    if "file" not in request.files:
+        flash("Файл не выбран")
+        return redirect(url_for("open_folder", folder_name=folder_name))
 
-# Проверка разрешенных расширений файлов
-def allowed_file(filename):
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    file = request.files["file"]
 
+    if file.filename == "":
+        flash("Файл не выбран")
+        return redirect(url_for("open_folder", folder_name=folder_name))
+
+    filename = secure_filename(file.filename)
+
+    folder_path = os.path.join(app.config['UPLOAD_FOLDER'], folder_name)
+    file_path = os.path.join(folder_path, filename)
+
+    file.save(file_path)
+
+    flash("Файл успешно загружен")
+    return redirect(url_for("open_folder", folder_name=folder_name))
+
+@app.route("/download/<folder_name>/<filename>")
+def download(folder_name,filename):
+    folder_path=os.path.join(app.config['UPLOAD_FOLDER'], folder_name)
+    if not os.path.exists(folder_path):
+        flash('Папка не найдена')
+        return redirect(url_for("success"))
+    return send_from_directory(folder_path, filename, as_attachment=True)
+
+@app.route("/delete/<folder_name>/<filename>")
+def delete(folder_name,filename):
+    folder_path=os.path.join(app.config['UPLOAD_FOLDER'],folder_name)
+    file_path = os.path.join(folder_path, filename)
+    if not os.path.exists(folder_path):
+        flash('Папка не найдена')
+        return redirect(url_for("success"))
+    os.remove(file_path)
+    flash("Файл удалён")
+    return redirect(url_for("open_folder", folder_name=folder_name))
+@app.route("/delete_papk/<folder_name>")
+def delete_papk(folder_name):
+    folder_path=os.path.join(app.config['UPLOAD_FOLDER'], folder_name)
+    if not os.path.exists(folder_path):
+        flash('Папка не найдена')
+    else:
+        shutil.rmtree(folder_path) 
+    return redirect(url_for("success"))
+if __name__ == "__main__":
+    app.run(port=4000)
