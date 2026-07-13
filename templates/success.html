@@ -4,7 +4,494 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Файлообменник - Файлы</title>
-    <link rel="stylesheet" href="/static/success.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            min-height: 100vh;
+            color: #ffffff;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated gradient background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 107, 107, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(52, 211, 153, 0.06) 0%, transparent 50%);
+            animation: backgroundMove 20s ease infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes backgroundMove {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        /* Floating particles */
+        .particle {
+            position: fixed;
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            to {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Header Styles */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 15px 0;
+            animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        .nav-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            position: relative;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #ffffff 0%, #a8a8a8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-glow {
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #7877C6, transparent);
+            border-radius: 2px;
+            animation: glow 2s ease infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 0.5; transform: scaleX(0.8); }
+            50% { opacity: 1; transform: scaleX(1); }
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: #bbb;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #34d399;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(52, 211, 153, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+        }
+
+        /* Main Content Styles */
+        .main-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .upload-section {
+            margin-bottom: 40px;
+            animation: fadeIn 1s ease 0.2s backwards;
+        }
+
+        .upload-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #7877C6 0%, #5e5da8 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(120, 119, 198, 0.4);
+            font-family: inherit;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(120, 119, 198, 0.5);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #fff;
+            animation: fadeIn 1s ease 0.3s backwards;
+        }
+
+        .section-title svg {
+            color: #7877C6;
+        }
+
+        .file-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .file-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .file-card {
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .file-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .file-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(120, 119, 198, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .file-card:hover::before {
+            left: 100%;
+        }
+
+        .file-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            background: rgba(120, 119, 198, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            position: relative;
+        }
+
+        .file-name {
+            flex-grow: 1;
+            font-weight: 500;
+            font-size: 1.05rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-arrow {
+            color: #666;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .file-card:hover .file-arrow {
+            color: #7877C6;
+            transform: translateX(4px);
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(20, 20, 20, 0.5);
+            border-radius: 24px;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            animation: fadeIn 1s ease 0.4s backwards;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .empty-state span {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-window {
+            background: rgba(20, 20, 20, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 1001;
+            transform: scale(0.95) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal.active .modal-window {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.3s;
+            display: flex;
+        }
+
+        .close-btn:hover {
+            color: #fff;
+        }
+
+        .modal-inp {
+            width: 100%;
+            padding: 16px 18px;
+            background: rgba(30, 30, 30, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 25px;
+        }
+
+        .modal-inp:focus {
+            outline: none;
+            border-color: #7877C6;
+            background: rgba(40, 40, 40, 0.8);
+            box-shadow: 0 0 0 4px rgba(120, 119, 198, 0.1);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .modal-btn.cancel {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ccc;
+        }
+
+        .modal-btn.cancel:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .modal-btn.submit {
+            background: linear-gradient(135deg, #7877C6 0%, #5e5da8 100%);
+            border: none;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(120, 119, 198, 0.3);
+        }
+
+        .modal-btn.submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(120, 119, 198, 0.5);
+        }
+
+        /* Push notification (Copied exactly from index) */
+        .push-notification {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .push-toast {
+            background: rgba(30, 42, 54, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid #7877C6;
+            color: #eef2f8;
+            padding: 14px 32px;
+            border-radius: 0 0 20px 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            transform: translateY(-100%);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .push-toast.show {
+            transform: translateY(0);
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 600px) {
+            .file-list {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                padding: 12px 0;
+            }
+            .logo h1 {
+                font-size: 1.4rem;
+            }
+            .user-info {
+                font-size: 0.75rem;
+                padding: 6px 12px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="push-notification" id="pushNotification">
@@ -77,13 +564,28 @@
     </div>
 
     <script>
+        // Анимация частиц из index.html
+        function createParticles() {
+            const particleCount = 30;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+                document.body.appendChild(particle);
+            }
+        }
+        createParticles();
+
         const openBtn = document.getElementById('openModal');
         const modal = document.getElementById('modal');
         const closeBtn = document.getElementById('closeModalBtn');
         const closeBtn2 = document.getElementById('closeModalBtn2');
         const closeOverlay = document.getElementById('closeModal');
         const files = document.getElementById('filess');
-        const new_papka = document.getElementById('new_papk')
+        const new_papka = document.getElementById('new_papk');
         const username = {{ username | tojson }};
         const file_list = {{ files | tojson }};
 
@@ -121,26 +623,25 @@
         }
 
         function reg_files(filess){
-            if(filess.length!=0){
-                let html=``
+            if(filess.length != 0){
+                let html = ``;
                 for (let i = 0; i < filess.length; i++){
-                    html+=`
+                    html += `
                         <a href="/folder/${username}/${filess[i]}" class="file-card-link">
                             <div class="file-card" style="animation-delay: ${i * 0.1}s">
                                 <div class="file-icon-wrapper">
                                     <div class="file-icon">📁</div>
-                                    <div class="file-glow"></div>
                                 </div>
                                 <span class="file-name">${filess[i]}</span>
                                 <div class="file-arrow">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M5 12h14M12 5l7 7-7 7"/>
                                     </svg>
                                 </div>
                             </div>
                         </a>`
                 }
-                files.innerHTML=html
+                files.innerHTML = html;
             }
         }
 
@@ -151,19 +652,19 @@
                 method: 'POST',
                 body: formData
             });
-            const inp = await response.json()
-            if(inp.status=="good"){
-                showPushMessage("✅ Папка создана!")
+            const inp = await response.json();
+            if(inp.status == "good"){
+                showPushMessage("✅ Папка создана!");
                 modal.classList.remove('active');
                 setTimeout(() => {
                     location.reload();
                 }, 1000);
             }
-            if(inp.status=="pov"){
-                showPushMessage("⚠️ Такая папка уже существует", true)
+            if(inp.status == "pov"){
+                showPushMessage("⚠️ Такая папка уже существует", true);
             }
-            if(inp.status=="Not_inp"){
-                showPushMessage("⚠️ Введите название папки", true)
+            if(inp.status == "Not_inp"){
+                showPushMessage("⚠️ Введите название папки", true);
             }
         });
 
