@@ -4,98 +4,170 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Файлообменник - Файлы</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='success.css') }}">
+    <link rel="stylesheet" href="/static/success.css">
 </head>
 <body>
+    <div class="push-notification" id="pushNotification">
+        <div class="push-toast" id="pushToast"></div>
+    </div>
+
     <div class="header">
         <div class="nav-container">
             <div class="logo">
                 <h1>FILEBOX</h1>
+                <div class="logo-glow"></div>
             </div>
             <div class="user-info">
+                <span class="status-dot"></span>
                 Авторизованный доступ
             </div>
         </div>
     </div>
 
     <div class="main-container">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="flash-message">
-                    {% for message in messages %}
-                        {{ message }}
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
-
         <div class="upload-section">        
-            <button type="button" class="upload-btn" id="openModal">Добавить папку</button>
+            <button type="button" class="upload-btn" id="openModal">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+                <span>Создать папку</span>
+            </button>
         </div>
 
         <div class="files-section">
-            <h2 class="section-title">Созданные папки</h2>
-
-            {% if files %}
-                <ul class="file-list">
-                    {% for papka in files %}
-                        
-                        <a href="/folder/{{ papka }}">
-                            <div class="file-item">
-                                <div class="file-icon">📁</div>
-                                <span class="file-name">{{ papka }}</span>
-                            </div>
-                        </a>
-                        
-                    {% endfor %}
-                </ul>
-            {% else %}
+            <h2 class="section-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                </svg>
+                Ваши папки
+            </h2>
+            <div id="filess" class="file-list">
                 <div class="empty-state">
-                    📁 Нет доступных папок
+                    <div class="empty-icon">📁</div>
+                    <p>Папок пока нет</p>
+                    <span>Создайте первую папку для хранения файлов</span>
                 </div>
-            {% endif %}
+            </div>
         </div>
     </div>
+
     <div class="modal" id="modal">
-        <form action="/upload" method="post">
+        <form id="new_papk" method="post">
             <div class="modal-overlay" id="closeModal"></div>
             <div class="modal-window">
-                <h3>Создание папки:</h3>
-
-                <!-- ТУТ У ТЕБЯ ЛЮБОЙ HTML -->
-                <input name="name_file" type="text" class="modal-inp" placeholder="Название папки">
+                <div class="modal-header">
+                    <h3>Новая папка</h3>
+                    <button type="button" class="close-btn" id="closeModalBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
                 
-                <div class="modal-btn">
-                    <button class="upload-btn" type="button" id="closeModalBtn">Закрыть</button>
-                    <button class="upload-btn" type="submit">Создать</button>
+                <div class="modal-body">
+                    <input name="name_file" type="text" class="modal-inp" placeholder="Название папки" required>
+                </div>
+                
+                <div class="modal-footer">
+                    <button class="modal-btn cancel" type="button" id="closeModalBtn2">Отмена</button>
+                    <button class="modal-btn submit" type="submit">Создать</button>
                 </div>
             </div>
         </form>
     </div>
+
+    <script>
+        const openBtn = document.getElementById('openModal');
+        const modal = document.getElementById('modal');
+        const closeBtn = document.getElementById('closeModalBtn');
+        const closeBtn2 = document.getElementById('closeModalBtn2');
+        const closeOverlay = document.getElementById('closeModal');
+        const files = document.getElementById('filess');
+        const new_papka = document.getElementById('new_papk')
+        const username = {{ username | tojson }};
+        const file_list = {{ files | tojson }};
+
+        openBtn.addEventListener('click', () => {
+            modal.classList.add('active');
+            setTimeout(() => {
+                document.querySelector('.modal-inp').focus();
+            }, 100);
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        closeBtn2.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        closeOverlay.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        function showPushMessage(message, isError = false) {
+            const toastEl = document.getElementById('pushToast');
+            if (!toastEl) return;
+
+            toastEl.textContent = message;
+            toastEl.style.background = isError ? 'rgba(58, 42, 42, 0.95)' : 'rgba(30, 42, 54, 0.95)';
+            toastEl.style.borderBottomColor = isError ? '#ff6b6b' : '#7877C6';
+            toastEl.classList.add('show');
+
+            setTimeout(() => {
+                toastEl.classList.remove('show');
+            }, 3000);
+        }
+
+        function reg_files(filess){
+            if(filess.length!=0){
+                let html=``
+                for (let i = 0; i < filess.length; i++){
+                    html+=`
+                        <a href="/folder/${username}/${filess[i]}" class="file-card-link">
+                            <div class="file-card" style="animation-delay: ${i * 0.1}s">
+                                <div class="file-icon-wrapper">
+                                    <div class="file-icon">📁</div>
+                                    <div class="file-glow"></div>
+                                </div>
+                                <span class="file-name">${filess[i]}</span>
+                                <div class="file-arrow">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </a>`
+                }
+                files.innerHTML=html
+            }
+        }
+
+        new_papka.addEventListener('submit', async function(e){
+            e.preventDefault();
+            const formData = new FormData(new_papka);
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const inp = await response.json()
+            if(inp.status=="good"){
+                showPushMessage("✅ Папка создана!")
+                modal.classList.remove('active');
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            }
+            if(inp.status=="pov"){
+                showPushMessage("⚠️ Такая папка уже существует", true)
+            }
+            if(inp.status=="Not_inp"){
+                showPushMessage("⚠️ Введите название папки", true)
+            }
+        });
+
+        reg_files(file_list);
+    </script>
 </body>
-<script>
-    const openBtn = document.getElementById('openModal');
-    const modal = document.getElementById('modal');
-    const closeBtn = document.getElementById('closeModalBtn');
-    const closeOverlay = document.getElementById('closeModal');
-
-    openBtn.addEventListener('click', () => {
-        modal.classList.add('active');
-    });
-    closeBtn.addEventListener('click', () => {
-        modal.classList.remove('active');
-    });
-    closeOverlay.addEventListener('click', () => {
-        modal.classList.remove('active');
-    });
-
-    // 🔥 Авто-скрытие flash-сообщений
-    const flash = document.querySelector('.flash-message');
-
-    if (flash) {
-        setTimeout(() => {
-            flash.style.display = 'none';
-        }, 3000); // 3000 мс = 3 секунды
-    }
-</script>
 </html>

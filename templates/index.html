@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Файлообменник - Вход</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
@@ -12,155 +14,457 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #0a0a0a;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #ffffff;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated gradient background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 107, 107, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(52, 211, 153, 0.06) 0%, transparent 50%);
+            animation: backgroundMove 20s ease infinite;
+            z-index: 0;
+        }
+
+        @keyframes backgroundMove {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        /* Floating particles */
+        .particle {
+            position: fixed;
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            to {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
         }
 
         .container {
             width: 100%;
-            max-width: 400px;
+            max-width: 440px;
             padding: 20px;
+            position: relative;
+            z-index: 10;
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .logo {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
+            animation: fadeIn 1s ease 0.2s backwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .logo h1 {
-            font-size: 2.5rem;
-            font-weight: 300;
-            letter-spacing: 2px;
-            color: #ffffff;
-            margin-bottom: 10px;
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #ffffff 0%, #a8a8a8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .logo h1::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #7877C6, transparent);
+            border-radius: 2px;
+            animation: glow 2s ease infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 0.5; width: 60px; }
+            50% { opacity: 1; width: 80px; }
         }
 
         .logo .subtitle {
             color: #888;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 3px;
+            text-transform: uppercase;
         }
 
         .auth-card {
-            background: #1e1e1e;
-            border-radius: 12px;
-            padding: 40px 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px solid #333;
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 45px 35px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1s ease 0.4s backwards;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            to { left: 100%; }
         }
 
         .form-group {
             margin-bottom: 25px;
+            animation: fadeIn 1s ease 0.6s backwards;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
-            color: #ccc;
-            font-size: 0.9rem;
-            font-weight: 500;
+            margin-bottom: 10px;
+            color: #bbb;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .password-input {
             width: 100%;
-            padding: 15px;
-            background: #2d2d2d;
-            border: 1px solid #404040;
-            border-radius: 8px;
+            padding: 16px 18px;
+            background: rgba(30, 30, 30, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             color: #ffffff;
             font-size: 1rem;
-            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 15px;
         }
 
         .password-input:focus {
             outline: none;
-            border-color: #666;
-            background: #333;
-            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+            border-color: #7877C6;
+            background: rgba(40, 40, 40, 0.8);
+            box-shadow: 
+                0 0 0 4px rgba(120, 119, 198, 0.1),
+                0 8px 16px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .password-input::placeholder {
+            color: #666;
         }
 
         .submit-btn {
             width: 100%;
-            padding: 15px;
-            background: #ffffff;
-            color: #000000;
+            padding: 16px;
+            background: linear-gradient(135deg, #7877C6 0%, #5e5da8 100%);
+            color: #ffffff;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 1rem;
             font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 15px rgba(120, 119, 198, 0.4),
+                0 1px 3px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease 0.8s backwards;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .submit-btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
 
         .submit-btn:hover {
-            background: #e6e6e6;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 25px rgba(120, 119, 198, 0.5),
+                0 3px 8px rgba(0, 0, 0, 0.3);
         }
 
-        .error-message {
-            background: #2d1a1a;
-            border: 1px solid #5c3a3a;
-            color: #ff6b6b;
-            padding: 12px;
-            border-radius: 6px;
-            margin-top: 20px;
-            text-align: center;
-            font-size: 0.9rem;
+        .submit-btn:active {
+            transform: translateY(0);
         }
 
         .security-notice {
             text-align: center;
-            margin-top: 25px;
+            margin-top: 30px;
             color: #666;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            animation: fadeIn 1s ease 1s backwards;
         }
 
+        .security-notice::before,
+        .security-notice::after {
+            content: '';
+            width: 30px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #333, transparent);
+        }
+
+        /* Push notification */
+        .push-notification {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .push-toast {
+            background: rgba(30, 42, 54, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid #7877C6;
+            color: #eef2f8;
+            padding: 14px 32px;
+            border-radius: 0 0 20px 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            transform: translateY(-100%);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .push-toast.show {
+            transform: translateY(0);
+        }
+
+        /* Mobile responsive */
         @media (max-width: 480px) {
             .container {
                 padding: 15px;
+                max-width: 100%;
+            }
+
+            .auth-card {
+                padding: 35px 25px;
+                border-radius: 20px;
+            }
+
+            .logo h1 {
+                font-size: 2.5rem;
+            }
+
+            .logo .subtitle {
+                font-size: 0.75rem;
+                letter-spacing: 2px;
+            }
+
+            .password-input {
+                padding: 14px 16px;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+
+            .submit-btn {
+                padding: 15px;
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 360px) {
+            .logo h1 {
+                font-size: 2rem;
             }
 
             .auth-card {
                 padding: 30px 20px;
             }
-
-            .logo h1 {
-                font-size: 2rem;
-            }
         }
     </style>
 </head>
 <body>
+    <div class="push-notification" id="pushNotification">
+        <div class="push-toast" id="pushToast"></div>
+    </div>
+
     <div class="container">
         <div class="logo">
             <h1>FILEBOX</h1>
-            <div class="subtitle">SECURE FILE EXCHANGE</div>
+            <div class="subtitle">Secure File Exchange</div>
         </div>
-
         <div class="auth-card">
-            <form method="POST" action="/login">
+            <form id="logo" method="POST">
                 <div class="form-group">
-                    <label for="passwordInput">ПАРОЛЬ ДОСТУПА</label>
+                    <label for="userInput">Никнейм</label>
+                    <input name="user" id="userInput" class="password-input" placeholder="Введите ваш никнейм" required>
+                </div>
+                <div class="form-group">
+                    <label for="passwordInput">Пароль</label>
                     <input type="password" name="password" id="passwordInput" class="password-input" placeholder="Введите пароль" required>
                 </div>
-                <button type="submit" class="submit-btn">ПОДКЛЮЧИТЬСЯ</button>
+                <button type="submit" class="submit-btn">Подключиться</button>
             </form>
 
-            {% if error %}
-                <div class="error-message">
-                    ⚠ Неверный пароль доступа
-                </div>
-            {% endif %}
-
             <div class="security-notice">
-                Защищенное соединение • Только авторизованный доступ
+                Защищенное соединение
             </div>
         </div>
     </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particleCount = 30;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+                document.body.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        function showPushMessage(message, isError = false) {
+            const toastEl = document.getElementById('pushToast');
+            if (!toastEl) return;
+
+            toastEl.textContent = message;
+            toastEl.style.background = isError ? 'rgba(58, 42, 42, 0.95)' : 'rgba(30, 42, 54, 0.95)';
+            toastEl.style.borderBottomColor = isError ? '#b08080' : '#7877C6';
+            toastEl.classList.add('show');
+            
+            setTimeout(() => {
+                toastEl.classList.remove('show');
+            }, 3000);
+        }
+
+        async function performLogin(formData) {
+            const response = await fetch('/login', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (response.redirected) {
+                window.location.href = response.url;
+                return true;
+            }
+            
+            return await response.json();
+        }
+
+        const form = document.getElementById('logo');
+        form.addEventListener('submit', async function(e){
+            e.preventDefault();
+            const formData = new FormData(form);
+            const response = await fetch('/login', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (response.redirected) {
+                window.location.href = response.url;
+                return;
+            }
+            
+            const inp = await response.json();
+            if(inp.status=="Not_user"){
+                const userConfirmed = confirm("Создать новый аккаунт?");
+                if (!userConfirmed){
+                    showPushMessage('❌ Создание аккаунта отменено', true);
+                    return;  
+                }
+                if(userConfirmed){
+                    const add_user= await fetch('/add_user',{method:'POST',body:formData});
+                    const resp= await add_user.json();
+                    if(resp.status=="good"){
+                        await performLogin(formData);
+                    }
+                }
+            }
+            if(inp.status=="error"){
+                showPushMessage(inp.notification, true);
+            }
+        });
+    </script>
 </body>
 </html>
