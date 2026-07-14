@@ -237,4 +237,4 @@ async def delete_papk(request: Request, user: str, folder_name: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, port=6767)
+    uvicorn.run(app, host="0.0.0.0", port=6767)
