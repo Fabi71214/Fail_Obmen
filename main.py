@@ -12,14 +12,11 @@ from werkzeug.utils import secure_filename
 
 app = FastAPI()
 
-# Добавляем middleware для сессий (для flash-сообщений)
 app.add_middleware(SessionMiddleware, secret_key=os.environ.get('SECRET_KEY', 'fallback-secret-key-for-development'))
 
-# Настройка статических файлов и шаблонов
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-# Настройка папки загрузок
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
